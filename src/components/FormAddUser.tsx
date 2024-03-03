@@ -1,12 +1,39 @@
-import React from "react";
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const FormAddUser = () => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confPassword, setConfPassword] = useState("");
+  const [role, setRole] = useState("");
+  const [message, setMessage] = useState("");
+  const navigate = useNavigate();
+
+  const saveUser = async (e: any) => {
+    e.preventDefault();
+    try {
+      await axios.post("http://localhost:8080/users", {
+        name: name,
+        email: email,
+        password: password,
+        confPassword: confPassword,
+        role: role,
+      })
+      navigate("/users");
+    } catch (error: any) {
+      if (error.response) {
+        setMessage(error.response.data.msg);
+      }
+    }
+  }
   return (
     <div className="">
       <h1 className="text-3xl font-bold text-base-300">Users</h1>
       <h2 className="text-2xl font-bold text-base-300">Add New User</h2>
 
-      <form className="mb-0 mt-6 space-y-4 rounded-lg p-4 shadow-lg sm:p-6 lg:p-8 max-w-screen-sm">
+      <form onSubmit={saveUser} className="mb-0 mt-6 space-y-4 rounded-lg p-4 shadow-lg sm:p-6 lg:p-8 max-w-screen-sm">
         <label className="input input-bordered flex items-center gap-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -19,6 +46,7 @@ const FormAddUser = () => {
           <input
             name="name"
             type="text"
+            onChange={(e) => setName(e.target.value)}
             className="grow"
             placeholder="Username"
           />
@@ -36,6 +64,7 @@ const FormAddUser = () => {
           <input
             name="email"
             type="text"
+            onChange={(e) => setEmail(e.target.value)}
             className="grow"
             placeholder="Email"
           />
@@ -56,6 +85,7 @@ const FormAddUser = () => {
           <input
             name="password"
             type="password"
+            onChange={(e) => setPassword(e.target.value)}
             className="grow"
             placeholder="Password"
           />
@@ -76,11 +106,12 @@ const FormAddUser = () => {
           <input
             name="password"
             type="password"
+            onChange={(e) => setConfPassword(e.target.value)}
             className="grow"
             placeholder="Confirm Password"
           />
         </label>
-        <select className="select select-bordered w-full">
+        <select onChange={(e) => setRole(e.target.value)} name="role" className="select select-bordered w-full">
           <option disabled selected>
             What is your role?
           </option>
